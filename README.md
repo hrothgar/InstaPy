@@ -1,7 +1,7 @@
 > **Think this tool is worth supporting?**  
 Feel free to contribute to the project in whatever way!  
-If you’re not familiar with python, you could e.g. build a github page for this project (Just head over to the issues, there might be a task for you). You're a marketer? Perfect! hit me with a message on contact.timgrossmann@gmail.com.  
-If you don’t have the time or skills to contribute, you can help spread the word via Facebook, Twitter and Co.!
+If you’re not familiar with python, you could build a github page for this project (Just head over to the issues, there might be a task for you). You're a marketer? Perfect! hit me with a message on contact.timgrossmann@gmail.com.  
+If you don’t have the time or skills to contribute, you can also support us through Patreon!  
 **Become a part of InstaPy!**  
 
 > **Disclaimer**: Please Note that this is a research project. I am by no means responsible for any usage of this tool. Use on your own behalf. I’m also not responsible if your accounts get banned due to extensive use of this tool.
@@ -243,10 +243,10 @@ session.clarifai_check_img_for(['nsfw'])
 
 ```python
 #checks the image for keywords food and lunch, if both are found,
-#comments with the given comments. If full_match is False (default), it only
+#comments with the given comments. If match_all is False (default), it only
 # requires a single tag to match Clarifai results.
 
-session.clarifai_check_img_for(['food', 'lunch'], comment=True, comments=['Tasty!', 'Yum!'], full_match=True)
+session.clarifai_check_img_for(['food', 'lunch'], comment=True, comments=['Tasty!', 'Yum!'], match_all=True)
 ```
 
 ###### Check out [https://clarifai.com/demo](https://clarifai.com/demo) to see some of the available tags.</h6>

@@ -106,7 +106,7 @@ class InstaPy:
       return self
 
     if (media not in [None, 'Photo', 'Video']):
-      print('Unkown media type! Treating as "any".')
+      print('  [Unkown media type! Treating as "any".]')
       media = None
 
     self.comments = comments or []
@@ -220,7 +220,7 @@ class InstaPy:
       else:
         print('---> {} has already been followed more than {} times'.format(acc_to_follow,
               str(self.follow_times)))
-        sleep(1)
+        sleep(.1)
 
     return self
 
@@ -234,7 +234,7 @@ class InstaPy:
     self.like_by_followers_lower_limit = limit or 0
     return self
 
-  def like_by_tags(self, tags=None, amount=50, media=None):
+  def like_by_tags(self, tags=None, amount=500, media=None):
 
     """Likes (default) 50 images per given tag"""
     if self.aborting:
@@ -249,26 +249,30 @@ class InstaPy:
     tags = tags or []
 
     for index, tag in enumerate(tags):
-      print('Tag [{}/{}]'.format(index + 1, len(tags)))
-      print('--> {}'.format(tag.encode('utf-8')))
-      self.logFile.write('Tag [{}/[]]'.format(index + 1, len(tags)))
+      # print('Tag [{}/{}]: '.format(index + 1, len(tags)) + '{}'.format(tag.encode('utf-8')))
+      # self.logFile.write('Tag [{}/[]]'.format(index + 1, len(tags)))
       self.logFile.write('--> {}\n'.format(tag.encode('utf-8')))
 
       try:
         links = get_links_for_tag(self.browser, tag, amount, media)
       except NoSuchElementException:
-        print('Too few images, aborting')
+        # print('Too few images, aborting')
         self.logFile.write('Too few images, aborting\n')
 
         self.aborting = True
         return self
 
       for i, link in enumerate(links):
-        print('[{}/{}]'.format(i + 1, len(links)))
+        # The first 9 or 12 are the popular ones.
+        if (i < 12):
+          continue
+
+        # print('[{}/{}]'.format(i + 1, len(links)))
         self.logFile.write('[{}/{}]'.format(i + 1, len(links)))
         self.logFile.write(link)
 
         try:
+
           inappropriate, user_name, is_video, reason = \
             check_link(self.browser, link, self.dont_like, self.ignore_if_contains, self.ignore_users,
                        self.username, self.like_by_followers_upper_limit, self.like_by_followers_lower_limit)
@@ -291,7 +295,7 @@ class InstaPy:
                                 self.clarifai_img_tags,
                                 self.clarifai_full_match)
                 except Exception as err:
-                  print('Image check error: {}'.format(err))
+                  # print('Image check error: {}'.format(err))
                   self.logFile.write('Image check error: {}\n'.format(err))
 
               if self.do_comment and user_name not in self.dont_include \
@@ -305,33 +309,33 @@ class InstaPy:
                   comments = self.comments + self.photo_comments
                 commented += comment_image(self.browser, comments)
               else:
-                print('--> Not commented')
-                sleep(1)
+                # print('--> Not commented')
+                sleep(.1)
 
               if self.do_follow and user_name not in self.dont_include \
                   and checked_img and following \
                   and self.follow_restrict.get(user_name, 0) < self.follow_times:
                 followed += follow_user(self.browser, user_name, self.follow_restrict)
               else:
-                print('--> Not following')
-                sleep(1)
+                # print('--> Not following')
+                sleep(.1)
             else:
               already_liked += 1
           else:
-            print('--> Image not liked: {}'.format(reason))
+            # print('--> Image not liked: {}'.format(reason))
             inap_img += 1
         except NoSuchElementException as err:
-          print('Invalid Page: {}'.format(err))
+          # print('Invalid Page: {}'.format(err))
           self.logFile.write('Invalid Page: {}\n'.format(err))
 
-        print('')
+        # print('')
         self.logFile.write('\n')
 
-    print('Liked: {}'.format(liked_img))
-    print('Already Liked: {}'.format(already_liked))
-    print('Inappropriate: {}'.format(inap_img))
-    print('Commented: {}'.format(commented))
-    print('Followed: {}'.format(followed))
+    # print('Liked: {}'.format(liked_img))
+    # print('Already Liked: {}'.format(already_liked))
+    # print('Inappropriate: {}'.format(inap_img))
+    # print('Commented: {}'.format(commented))
+    # print('Followed: {}'.format(followed))
 
     self.logFile.write('Liked: {}\n'.format(liked_img))
     self.logFile.write('Already Liked: {}\n'.format(already_liked))
@@ -341,19 +345,20 @@ class InstaPy:
 
     self.followed += followed
 
-    return self
+    # return self
+    return liked_img, already_liked, inap_img, commented
 
-  def like_from_image(self, url, amount=50, media=None):
+  def like_from_image(self, url, amount=500, media=None):
     """Gets the tags from an image and likes 50 images for each tag"""
     if self.aborting:
       return self
 
     try:
       tags = get_tags(self.browser, url)
-      print(tags)
+      # print(tags)
       self.like_by_tags(tags, amount, media)
     except TypeError as err:
-      print('Sorry, an error occured: {}'.format(err))
+      # print('Sorry, an error occured: {}'.format(err))
       self.logFile.write('Sorry, an error occured: {}\n'.format(err))
 
       self.aborting = True
@@ -388,9 +393,9 @@ class InstaPy:
     if self.nogui:
       self.display.stop()
 
-    print('')
-    print('Session ended')
-    print('-------------')
+    # print('')
+    # print('Session ended')
+    # print('-------------')
 
     self.logFile.write(
       '\nSession ended - {}\n'.format(
